@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, GTVHomePlusActivity!</string>
     <string name="app_name">GTVHomePlus</string>
+    
+    <!--  Action Bar  -->
+    <string name="internal_storage_menu">Internal</string>
+    <string name="usb_storage_menu">USB</string>
+    <string name="network_storage_menu">Network</string>
 
 </resources>
