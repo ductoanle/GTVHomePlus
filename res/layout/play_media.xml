@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <VideoView
+        android:id="@+id/media_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" >
+    </VideoView>
+
+    <TextView
+        android:id="@+id/tv_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/subtitle_padding"
+        android:shadowColor="@color/black"
+        android:shadowDx="0.8"
+        android:shadowDy="0.8"
+        android:shadowRadius="1.8"
+        android:textColor="@color/white"
+        android:textSize="@dimen/subtitle_size" />
+
+</FrameLayout>

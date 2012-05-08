@@ -7,5 +7,5 @@
     <string name="internal_storage_menu">Internal</string>
     <string name="usb_storage_menu">USB</string>
     <string name="network_storage_menu">Network</string>
-
+		<string name="play_movie">PlayMovie</string>
 </resources>

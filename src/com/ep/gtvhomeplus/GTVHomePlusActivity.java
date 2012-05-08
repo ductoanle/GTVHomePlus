@@ -92,7 +92,7 @@ public class GTVHomePlusActivity extends Activity {
 				.newTab()
 				.setIcon(R.drawable.usb_storage)
 				.setText(R.string.usb_storage_menu)
-				.setTabListener(new TabListener<InternalStoragesFragment>(this, "Internal", InternalStoragesFragment.class));
+				.setTabListener(new TabListener<PlayMovieFragment>(this, "Internal", PlayMovieFragment.class));
 		actionBar.addTab(tab);
 		
 		tab = actionBar
