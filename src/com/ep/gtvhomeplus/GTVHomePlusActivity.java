@@ -11,12 +11,17 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.Window;
 import android.app.FragmentTransaction;
 
 import com.ep.gtvhomeplus.fragments.*;
 
 public class GTVHomePlusActivity extends Activity {
 
+	private static final String INTERNAL_TAG="internal";
+	private static final String USB_TAG="usb";
+	private static final String NETWORK_TAG="network";
+	
 	private ActionBar mActionBar;
 
 	public static class TabListener<T extends Fragment> implements
@@ -77,6 +82,8 @@ public class GTVHomePlusActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
 		findViewById(android.R.id.content).setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.content_background));
 		ActionBar actionBar = getActionBar();
@@ -85,21 +92,21 @@ public class GTVHomePlusActivity extends Activity {
 				.newTab()
 				.setIcon(R.drawable.internal_storage)
 				.setText(R.string.internal_storage_menu)
-				.setTabListener(new TabListener<InternalStoragesFragment>(this, "Internal", InternalStoragesFragment.class));
+				.setTabListener(new TabListener<InternalStoragesFragment>(this, INTERNAL_TAG, InternalStoragesFragment.class));
 		actionBar.addTab(tab);
 		
 		tab = actionBar
 				.newTab()
 				.setIcon(R.drawable.usb_storage)
 				.setText(R.string.usb_storage_menu)
-				.setTabListener(new TabListener<PlayMovieFragment>(this, "Internal", PlayMovieFragment.class));
+				.setTabListener(new TabListener<PlayMovieFragment>(this, USB_TAG, PlayMovieFragment.class));
 		actionBar.addTab(tab);
 		
 		tab = actionBar
 				.newTab()
 				.setIcon(R.drawable.network_storage)
 				.setText(R.string.network_storage_menu)
-				.setTabListener(new TabListener<InternalStoragesFragment>(this, "Internal", InternalStoragesFragment.class));
+				.setTabListener(new TabListener<InternalStoragesFragment>(this, NETWORK_TAG, InternalStoragesFragment.class));
 		actionBar.addTab(tab);
 	}
 
@@ -136,4 +143,21 @@ public class GTVHomePlusActivity extends Activity {
 		inflater.inflate(R.menu.universal_menu, menu);
 		return true;
 	}
+
+	@Override
+	public void onBackPressed() {
+		Tab selectedTab = getActionBar().getSelectedTab();
+		switch (selectedTab.getPosition()){
+		case 0:
+			InternalStoragesFragment fragment = (InternalStoragesFragment) (getFragmentManager().findFragmentByTag(INTERNAL_TAG));
+			if(fragment!=null);
+			   fragment.onBackPressed();
+			break;
+		default:
+			super.onBackPressed();
+		}
+	}
+	
+	
+	
 }

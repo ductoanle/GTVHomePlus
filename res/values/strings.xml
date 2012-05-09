@@ -7,5 +7,11 @@
     <string name="internal_storage_menu">Internal</string>
     <string name="usb_storage_menu">USB</string>
     <string name="network_storage_menu">Network</string>
-		<string name="play_movie">PlayMovie</string>
+    <string name="play_movie">PlayMovie</string>
+    
+    <!-- File, folder related -->
+    <string name="this_folder_is_empty">This folder is empty</string>
+    <string name="application_not_available">Application not available</string>
+    <string name="error_file_does_not_exists">File does not exist.</string>
+    
 </resources>
