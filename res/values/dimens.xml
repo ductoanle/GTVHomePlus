@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!--  Subtitle -->
+    <dimen name="subtitle_padding">25dp</dimen>
+    <dimen name="subtitle_size">26dp</dimen>
+</resources>
