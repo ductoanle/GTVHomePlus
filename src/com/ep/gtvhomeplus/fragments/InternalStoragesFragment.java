@@ -280,7 +280,6 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 
 		//update  other views
 		selectInList(mPreviousDirectory);
-		getActivity().setProgressBarIndeterminateVisibility(false);
 		mCurrentDirectoryText.setText(currentDirectory.getAbsolutePath());
 		mProgressBar.setVisibility(View.GONE);
 		mEmptyText.setVisibility(View.VISIBLE); 
@@ -348,13 +347,9 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 	 */
 	private void browseTo(final File aDirectory){           
 		if (aDirectory.isDirectory()){
-			if (aDirectory.equals(currentDirectory)) {
-				//TODO
-			} else {
 				mPreviousDirectory = currentDirectory;
 				currentDirectory = aDirectory;
 				refreshList();
-			}
 		}else{ 
 				openFile(aDirectory); 
 		} 
@@ -401,8 +396,6 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 		mListDir.clear();
 		mListFile.clear();
 		mListSdCard.clear();
-
-		getActivity().setProgressBarIndeterminateVisibility(true);
 
 		// Don't show the "folder empty" text since we're scanning.
 		mEmptyText.setVisibility(View.GONE);
