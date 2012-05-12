@@ -30,6 +30,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ep.gtvhomeplus.GTVHomePlusActivity;
 import com.ep.gtvhomeplus.R;
 import com.ep.gtvhomeplus.file.DirectoryContents;
 import com.ep.gtvhomeplus.file.DirectoryScanner;
@@ -56,6 +58,8 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 	private static final String BUNDLE_CONTEXT_TEXT = "context_text";
 	private static final String BUNDLE_STEPS_BACK = "steps_back";
 	private static final String BUNDLE_DIRECTORY_ENTRIES = "directory_entries";
+	
+	public static final String USB_ROOT_PATH="/mnt/media";
 	/** Shows whether activity state has been restored (e.g. from a rotation). */
 	private static boolean mRestored = false;
 
@@ -110,6 +114,7 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 	private ProgressBar mProgressBar;
     private ListView mFilesList;
     ListAdapter mFileListAdapter;
+    
 	
 	/** Called when the activity is first created. */ 
 	@Override 
@@ -121,16 +126,24 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 				InternalStoragesFragment.this.handleMessage(msg);
 			}
 		};
-		// Create map of extensions:
+		
+		//// Create map of extensions:
 		getMimeTypes();
 		getSdCardPath();      
-
+        
+		//// setDefaultDirectory
 		mDefaultDirectory = new File("/");
-		if (!TextUtils.isEmpty(mSdCardPath)) {
-			mDefaultDirectory = new File(mSdCardPath);
+		int selectedTabPosition = ((GTVHomePlusActivity)getActivity()).getSelectedTabPosition() ;
+		if(selectedTabPosition == GTVHomePlusActivity.TAB_INTERNAL_POSITION){
+		    if (!TextUtils.isEmpty(mSdCardPath)) {
+			   mDefaultDirectory = new File(mSdCardPath);
+		    }
+		}else if (selectedTabPosition == GTVHomePlusActivity.TAB_USB_POSITION){
+			mDefaultDirectory = new File(USB_ROOT_PATH);
 		}
 		
-		// Default state
+		
+		//// Default state
 		mState = STATE_BROWSE;
 		mWritableOnly = false;
 		mStepsBack = 0;
@@ -444,6 +457,7 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 		if (clickedFile != null) {
 			if (clickedFile.isDirectory()) {
 				// If we click on folders, we can return later by the "back" key.
+				Log.d(TAG,"step back increase");
 						mStepsBack++;
 			}
 			browseTo(clickedFile);

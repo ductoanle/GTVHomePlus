@@ -1,5 +1,7 @@
 package com.ep.gtvhomeplus;
 
+import java.io.File;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -21,8 +23,13 @@ public class GTVHomePlusActivity extends Activity {
 	private static final String USB_TAG="usb";
 	private static final String NETWORK_TAG="network";
 	
+	////tab positions
+	public static final int TAB_INTERNAL_POSITION =0;
+	public static final int TAB_USB_POSITION =1;
+	public static final int TAB_NETWORK_POSITION =2;
+	
 	private ActionBar mActionBar;
-
+    
 	public static class TabListener<T extends Fragment> implements
 	ActionBar.TabListener {
 		private final Activity mActivity;
@@ -86,6 +93,7 @@ public class GTVHomePlusActivity extends Activity {
 				getResources().getDrawable(R.drawable.content_background));
 		ActionBar actionBar = getActionBar();
 		Tab tab;
+		
 		tab = actionBar
 				.newTab()
 				.setIcon(R.drawable.internal_storage)
@@ -97,14 +105,14 @@ public class GTVHomePlusActivity extends Activity {
 				.newTab()
 				.setIcon(R.drawable.usb_storage)
 				.setText(R.string.usb_storage_menu)
-				.setTabListener(new TabListener<PlayMovieFragment>(this, USB_TAG, PlayMovieFragment.class));
+				.setTabListener(new TabListener<InternalStoragesFragment>(this, USB_TAG, InternalStoragesFragment.class));
 		actionBar.addTab(tab);
 		
 		tab = actionBar
 				.newTab()
 				.setIcon(R.drawable.network_storage)
 				.setText(R.string.network_storage_menu)
-				.setTabListener(new TabListener<InternalStoragesFragment>(this, NETWORK_TAG, InternalStoragesFragment.class));
+				.setTabListener(new TabListener<PlayMovieFragment>(this, NETWORK_TAG, PlayMovieFragment.class));
 		actionBar.addTab(tab);
 	}
 
@@ -145,15 +153,25 @@ public class GTVHomePlusActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		Tab selectedTab = getActionBar().getSelectedTab();
+		
 		switch (selectedTab.getPosition()){
-		case 0:
+		case TAB_INTERNAL_POSITION:
 			InternalStoragesFragment fragment = (InternalStoragesFragment) (getFragmentManager().findFragmentByTag(INTERNAL_TAG));
 			if(fragment!=null);
 			   fragment.onBackPressed();
 			break;
+		case TAB_USB_POSITION:
+			InternalStoragesFragment usbFragment = (InternalStoragesFragment) (getFragmentManager().findFragmentByTag(USB_TAG));
+			if(usbFragment!=null);
+			   usbFragment.onBackPressed();
+			break;
 		default:
 			super.onBackPressed();
 		}
+	}
+	
+	public int getSelectedTabPosition(){
+		return getActionBar().getSelectedTab().getPosition();
 	}
 	
 	
