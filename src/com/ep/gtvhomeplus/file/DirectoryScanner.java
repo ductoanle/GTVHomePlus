@@ -27,7 +27,7 @@ import com.ep.gtvhomeplus.R;
 import com.ep.gtvhomeplus.file.utils.FileUtils;
 import com.ep.gtvhomeplus.file.utils.ImageUtils;
 import com.ep.gtvhomeplus.file.utils.MimeTypes;
-import com.ep.gtvhomeplus.fragments.InternalStoragesFragment;
+import com.ep.gtvhomeplus.fragments.AttachedStoragesFragment;
 
 public class DirectoryScanner extends Thread {
 
@@ -244,7 +244,7 @@ public class DirectoryScanner extends Thread {
 			contents.listSdCard = listSdCard;
 			contents.noMedia = noMedia;
 
-			Message msg = handler.obtainMessage(InternalStoragesFragment.MESSAGE_SHOW_DIRECTORY_CONTENTS);
+			Message msg = handler.obtainMessage(AttachedStoragesFragment.MESSAGE_SHOW_DIRECTORY_CONTENTS);
 			msg.obj = contents;
 			msg.sendToTarget();
 		}
@@ -262,7 +262,7 @@ public class DirectoryScanner extends Thread {
 				return;
 			}
 
-			Message msg = handler.obtainMessage(InternalStoragesFragment.MESSAGE_SET_PROGRESS);
+			Message msg = handler.obtainMessage(AttachedStoragesFragment.MESSAGE_SET_PROGRESS);
 			msg.arg1 = progress;
 			msg.arg2 = maxProgress;
 			msg.sendToTarget();

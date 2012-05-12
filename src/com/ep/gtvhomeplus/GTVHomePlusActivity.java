@@ -1,7 +1,5 @@
 package com.ep.gtvhomeplus;
 
-import java.io.File;
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -12,7 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 
-import com.ep.gtvhomeplus.fragments.InternalStoragesFragment;
+import com.ep.gtvhomeplus.fragments.AttachedStoragesFragment;
 import com.ep.gtvhomeplus.fragments.PlayMovieFragment;
 import com.example.google.tv.leftnavbar.LeftNavBar;
 import com.example.google.tv.leftnavbar.LeftNavBarService;
@@ -98,14 +96,14 @@ public class GTVHomePlusActivity extends Activity {
 				.newTab()
 				.setIcon(R.drawable.internal_storage)
 				.setText(R.string.internal_storage_menu)
-				.setTabListener(new TabListener<InternalStoragesFragment>(this, INTERNAL_TAG, InternalStoragesFragment.class));
+				.setTabListener(new TabListener<AttachedStoragesFragment>(this, INTERNAL_TAG, AttachedStoragesFragment.class));
 		actionBar.addTab(tab);
 		
 		tab = actionBar
 				.newTab()
 				.setIcon(R.drawable.usb_storage)
 				.setText(R.string.usb_storage_menu)
-				.setTabListener(new TabListener<InternalStoragesFragment>(this, USB_TAG, InternalStoragesFragment.class));
+				.setTabListener(new TabListener<AttachedStoragesFragment>(this, USB_TAG, AttachedStoragesFragment.class));
 		actionBar.addTab(tab);
 		
 		tab = actionBar
@@ -156,12 +154,12 @@ public class GTVHomePlusActivity extends Activity {
 		
 		switch (selectedTab.getPosition()){
 		case TAB_INTERNAL_POSITION:
-			InternalStoragesFragment fragment = (InternalStoragesFragment) (getFragmentManager().findFragmentByTag(INTERNAL_TAG));
+			AttachedStoragesFragment fragment = (AttachedStoragesFragment) (getFragmentManager().findFragmentByTag(INTERNAL_TAG));
 			if(fragment!=null);
 			   fragment.onBackPressed();
 			break;
 		case TAB_USB_POSITION:
-			InternalStoragesFragment usbFragment = (InternalStoragesFragment) (getFragmentManager().findFragmentByTag(USB_TAG));
+			AttachedStoragesFragment usbFragment = (AttachedStoragesFragment) (getFragmentManager().findFragmentByTag(USB_TAG));
 			if(usbFragment!=null);
 			   usbFragment.onBackPressed();
 			break;

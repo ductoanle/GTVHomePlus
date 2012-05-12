@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.ep.gtvhomeplus.file.utils.FileUtils;
 import com.ep.gtvhomeplus.file.utils.ImageUtils;
 

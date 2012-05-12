@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.xmlpull.v1.XmlPullParserException;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
@@ -42,7 +44,7 @@ import com.ep.gtvhomeplus.file.utils.FileUtils;
 import com.ep.gtvhomeplus.file.utils.MimeTypeParser;
 import com.ep.gtvhomeplus.file.utils.MimeTypes;
 
-public class InternalStoragesFragment extends Fragment implements OnItemClickListener{
+public class AttachedStoragesFragment extends Fragment implements OnItemClickListener{
 
 	private static final String TAG = "InternalStoragesFragment";
 
@@ -123,7 +125,7 @@ public class InternalStoragesFragment extends Fragment implements OnItemClickLis
 
 		currentHandler = new Handler() {
 			public void handleMessage(Message msg) {
-				InternalStoragesFragment.this.handleMessage(msg);
+				AttachedStoragesFragment.this.handleMessage(msg);
 			}
 		};
 		

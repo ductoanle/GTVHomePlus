@@ -1,7 +1,6 @@
 package com.ep.gtvhomeplus.file;
 
 
-import com.ep.gtvhomeplus.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -10,6 +9,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.ep.gtvhomeplus.R;
 
 public class IconifiedTextView extends LinearLayout { 
       
