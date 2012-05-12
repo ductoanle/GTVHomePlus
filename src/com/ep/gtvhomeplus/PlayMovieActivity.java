@@ -5,18 +5,29 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.json.JSONObject;
+
+import com.ep.gtvhomeplus.utils.SrtManager;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.os.Handler;
+import android.os.Message;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 public class PlayMovieActivity extends Activity {
+	
+	private static final String TAG = "PlayMovieActivity";
 	
 	public static final String MEDIA_FILE = "media_file";
 	public static final String MEDIA_FOLDER = "media_folder";
@@ -25,10 +36,15 @@ public class PlayMovieActivity extends Activity {
 	private String mMediaFolderUrl;
 	private File mMediaFolder;
 	private ArrayList<File> mSubtitles;
+	private SrtManager mCurrentSubtitle;
 	
 	private MediaController mMediaController;
 	private MediaPlayerListener mMediaPlayerListener;
 	private VideoView mVideoView;
+	private TextView mSubtitleView;
+	private final SubtitleUpdateHandler subUpdate = new SubtitleUpdateHandler();
+	
+	private int mCurrentTime;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceStates){
@@ -37,6 +53,7 @@ public class PlayMovieActivity extends Activity {
 		loadSubtitles();
 		setContentView(R.layout.play_media);
 		initializeVideoView();
+		mSubtitleView = (TextView)findViewById(R.id.tv_subtitle);
 	}
 	
 	private void loadMediaInfo(){
@@ -62,24 +79,37 @@ public class PlayMovieActivity extends Activity {
 	}
 	
 	private void initializeVideoView(){
+		Log.i(TAG, mMediaFileUrl); 
 		mMediaController = new MediaController(this);
 		mMediaPlayerListener = new MediaPlayerListener();
 		mVideoView = (VideoView)findViewById(R.id.media_view);
-		mVideoView.setVideoURI(Uri.parse(mMediaFolderUrl + "/" + mMediaFileUrl));
+		mVideoView.setVideoURI(Uri.parse(mMediaFileUrl));
 		mVideoView.setMediaController(mMediaController);
 		mVideoView.setOnPreparedListener(mMediaPlayerListener);
 		mVideoView.setOnCompletionListener(mMediaPlayerListener);
 		mVideoView.setOnErrorListener(mMediaPlayerListener);
 		mVideoView.requestFocus();
-		
 	}
 	
 	private void prepareSubtitles(){
+		String subName;
+		String mediaFileName = new File(mMediaFileUrl).getName();
+		if (mSubtitles.size() > 0){
+			mCurrentSubtitle = new SrtManager(mSubtitles.get(0).getAbsolutePath());
+			for (int i = 1; i < mSubtitles.size(); i++){
+				subName = mSubtitles.get(i).getName();
+				if (subName.substring(0, subName.length() - 4).equals(mediaFileName.substring(0, mediaFileName.length() - 4))){
+					mCurrentSubtitle = new SrtManager(mSubtitles.get(i).getAbsolutePath());
+					break;
+				}
+			}
+		}
 		
 	}
 	
 	private void playVideo(){
 		mVideoView.start();
+		subUpdate.playSubtitles();
 	}
 	
 	private class MediaPlayerListener
@@ -104,5 +134,44 @@ public class PlayMovieActivity extends Activity {
 //				mMediaPlayerErrorMessage=R.string.media_error_progressive_playback;
 			return true;
 		}
+	}
+	
+	/** Subtitle Update Handler **/
+	private class SubtitleUpdateHandler extends Handler {
+		private long mSubtitlePeriod = 20L;
+
+		public void playSubtitles() {
+			this.sendEmptyMessage(0);
+		}
+
+		public void pauseSubtitles() {
+			this.removeMessages(0);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			this.sendEmptyMessageDelayed(0, mSubtitlePeriod);
+			mCurrentTime = mVideoView.getCurrentPosition();
+
+			if (mCurrentSubtitle!=null && !mCurrentSubtitle.isEmpty()) {
+				//update subtitles portion if we do not have to show the ads
+				if(mVideoView.isPlaying()) {
+					String content = mCurrentSubtitle.getSubtitleByTime(mCurrentTime);
+					mSubtitleView.setText(Html.fromHtml(content));
+				}
+			}
+		}
+	}
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		subUpdate.pauseSubtitles();
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		subUpdate.playSubtitles();
 	}
 }
