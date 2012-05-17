@@ -22,9 +22,19 @@ import java.util.Map;
 import android.webkit.MimeTypeMap;
 
 public class MimeTypes {
+    
+	/**
+	 * Constants MIMETYPE string
+	 */
+	public static final String JPEG="image/jpeg";
+	public static final String GIF="image/gif";
+	public static final String PNG="image/png";
+	public static final String BMP="image/bmp";
 
+	
 	private Map<String, String> mMimeTypes;
 	private Map<String, Integer> mIcons;
+	
 
 	public MimeTypes() {
 		mMimeTypes = new HashMap<String,String>();
@@ -78,4 +88,6 @@ public class MimeTypes {
 			return 0; // Invalid identifier
 		return iconResId;
 	}
+	
+
 }

@@ -93,19 +93,22 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int action_bar_home=0x7f0a000a;
         public static final int empty=0x7f0a0006;
         public static final int empty_text=0x7f0a0007;
+        public static final int gallery_bottom=0x7f0a0019;
         public static final int home=0x7f0a000b;
         public static final int icon=0x7f0a0000;
         public static final int info=0x7f0a0002;
+        public static final int iv_focused=0x7f0a0018;
+        public static final int iv_item=0x7f0a001f;
         public static final int left_icon=0x7f0a0012;
         public static final int left_nav=0x7f0a0011;
         public static final int leftnav_bar_tab=0x7f0a0010;
         public static final int list_files=0x7f0a0005;
         public static final int main=0x7f0a0009;
-        public static final int media_view=0x7f0a0018;
+        public static final int media_view=0x7f0a001a;
         public static final int menu=0x7f0a000f;
-        public static final int name=0x7f0a001c;
-        public static final int picture=0x7f0a001b;
-        public static final int play_movie_btn=0x7f0a001a;
+        public static final int name=0x7f0a001e;
+        public static final int picture=0x7f0a001d;
+        public static final int play_movie_btn=0x7f0a001c;
         public static final int progress_circular=0x7f0a0014;
         public static final int progress_horizontal=0x7f0a0016;
         public static final int right_icon=0x7f0a0015;
@@ -117,7 +120,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int title=0x7f0a000d;
         public static final int title_container=0x7f0a0017;
         public static final int tv_current_directory=0x7f0a0004;
-        public static final int tv_subtitle=0x7f0a0019;
+        public static final int tv_subtitle=0x7f0a001b;
         public static final int up=0x7f0a000c;
     }
     public static final class layout {
@@ -135,10 +138,12 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int lib_left_nav=0x7f03000b;
         public static final int lib_title_bar=0x7f03000c;
         public static final int lib_title_container=0x7f03000d;
-        public static final int play_media=0x7f03000e;
-        public static final int play_movie=0x7f03000f;
-        public static final int spinner_item=0x7f030010;
-        public static final int tab=0x7f030011;
+        public static final int photo_gallery=0x7f03000e;
+        public static final int play_media=0x7f03000f;
+        public static final int play_movie=0x7f030010;
+        public static final int spinner_item=0x7f030011;
+        public static final int tab=0x7f030012;
+        public static final int thumbnail_item=0x7f030013;
     }
     public static final class menu {
         public static final int universal_menu=0x7f090000;

@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ep.gtvhomeplus.GTVHomePlusActivity;
+import com.ep.gtvhomeplus.PhotoGalleryActivity;
 import com.ep.gtvhomeplus.R;
 import com.ep.gtvhomeplus.file.DirectoryContents;
 import com.ep.gtvhomeplus.file.DirectoryScanner;
@@ -41,6 +42,7 @@ import com.ep.gtvhomeplus.file.IconifiedText;
 import com.ep.gtvhomeplus.file.IconifiedTextListAdapter;
 import com.ep.gtvhomeplus.file.ThumbnailLoader;
 import com.ep.gtvhomeplus.file.utils.FileUtils;
+import com.ep.gtvhomeplus.file.utils.MimeTypeHelper;
 import com.ep.gtvhomeplus.file.utils.MimeTypeParser;
 import com.ep.gtvhomeplus.file.utils.MimeTypes;
 
@@ -376,11 +378,16 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 			Toast.makeText(getActivity(), R.string.error_file_does_not_exists, Toast.LENGTH_SHORT).show();
 			return;
 		}
-
-		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-
 		Uri data = FileUtils.getUri(aFile);
-		String type = mMimeTypes.getMimeType(aFile.getName());
+		String type = mMimeTypes.getMimeType(aFile.getName());		
+		
+	    if(MimeTypeHelper.isPhotoType(type)){
+	    	Intent intent = new Intent(getActivity(),PhotoGalleryActivity.class);
+	    	intent.setData(data);
+	    	startActivity(intent);
+	    }
+	    else{
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
 		intent.setDataAndType(data, type);
 
 		try {
@@ -388,6 +395,8 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 		} catch (ActivityNotFoundException e) {
 			Toast.makeText(getActivity(), R.string.application_not_available, Toast.LENGTH_SHORT).show();
 		};
+	    }
+		
 	} 
 
 	public void refreshList() {
