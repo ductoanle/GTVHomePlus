@@ -23,6 +23,7 @@ public class PhotoGalleryActivity extends Activity{
 	////views
     ImageView mFocusedImage;
 	Gallery mBottomGallery;
+	View mParentView;
 	
 	Uri mInitialPhotoUri;
 	File[] mPhotoFiles;
@@ -33,6 +34,7 @@ public class PhotoGalleryActivity extends Activity{
 		setContentView(R.layout.photo_gallery);
 		mFocusedImage =(ImageView) findViewById(R.id.iv_focused);
 		mBottomGallery= (Gallery) findViewById(R.id.gallery_bottom);
+		mParentView = findViewById(R.id.main_content);
 		
 		mInitialPhotoUri = getIntent().getData();
 		File photoFile= new File(mInitialPhotoUri.getPath());
@@ -48,24 +50,26 @@ public class PhotoGalleryActivity extends Activity{
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int mScreenWidth = metrics.widthPixels;
     	int mScreenHeight = metrics.heightPixels;
-    	
-        ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles);
-
+    
         int galleryWidth = mScreenWidth;
 		int galleryHeight = mScreenHeight/5;
 
+		
 		int imageHeight = galleryHeight;
 		int imageWidth = galleryWidth * 1 / 7;
 		int spacing = imageWidth /10;
+		
+	    int offset = galleryWidth - imageWidth - 2 * spacing;
+	   
+        ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles);	    
 		imageAdapter.setImageSize(imageWidth, imageHeight);
 		mBottomGallery.setSpacing(spacing);
         mBottomGallery.setAdapter(imageAdapter);
         
     	// set gallery to left side
         MarginLayoutParams mlp = (MarginLayoutParams) mBottomGallery.getLayoutParams();
-        mlp.setMargins(-(mScreenWidth / 2 + (imageWidth)), mlp.topMargin,
-                    mlp.rightMargin, mlp.bottomMargin);
-
+        mlp.setMargins(-offset, mlp.topMargin,
+                mlp.rightMargin, mlp.bottomMargin);
 
 	}
 	
