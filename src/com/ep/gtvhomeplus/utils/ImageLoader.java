@@ -211,11 +211,10 @@ public class ImageLoader {
 				if(options.outWidth > 0 && options.outHeight > 0){
 					if (!cancel) {
 						// Now see how much we need to scale it down.
-						//use 2*imageWidth and 2*imageHeight so that the bitmap to be resized later has better quality
 						int widthFactor = (options.outWidth + imageWidth - 1)
-								/ (2*imageWidth);
+								/ imageWidth;
 						int heightFactor = (options.outHeight + imageHeight - 1)
-								/ (2*imageHeight);
+								/ imageHeight;
 						widthFactor = Math.max(widthFactor, heightFactor);
 						widthFactor = Math.max(widthFactor, 1);
 						// Now turn it into a power of two.
@@ -225,16 +224,12 @@ public class ImageLoader {
 									widthFactor &= widthFactor - 1;
 								}
 
-								widthFactor <<= 1;
 							}
 						}
 						
-						options.inSampleSize = widthFactor;
-						options.inJustDecodeBounds = false;
-						
-						Bitmap bitmap = ImageUtils.resizeBitmap(
-								BitmapFactory.decodeFile(filePath, options),
-								imageWidth, imageHeight);
+						BitmapFactory.Options options2 =new BitmapFactory.Options();
+						options2.inSampleSize=widthFactor;
+						Bitmap bitmap = BitmapFactory.decodeFile(filePath,options2);
 						
 						if (bitmap != null) {
 							return bitmap;
