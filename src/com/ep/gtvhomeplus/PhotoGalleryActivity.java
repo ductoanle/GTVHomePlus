@@ -16,8 +16,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
-
-import com.ep.gtvhomeplus.file.utils.ImageUtils;
+import com.ep.gtvhomeplus.utils.ImageLoader;
 
 public class PhotoGalleryActivity extends Activity{
 	////views
@@ -61,8 +60,7 @@ public class PhotoGalleryActivity extends Activity{
 		
 	    int offset = galleryWidth - imageWidth - 2 * spacing;
 	   
-        ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles);	    
-		imageAdapter.setImageSize(imageWidth, imageHeight);
+        ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles,imageWidth,imageHeight);	    
 		mBottomGallery.setSpacing(spacing);
         mBottomGallery.setAdapter(imageAdapter);
         
@@ -80,11 +78,15 @@ public class PhotoGalleryActivity extends Activity{
     	int width,height;
     	LayoutInflater inflater;
     	int resource;
-    	public ImageAdapter(Context context, File[] imageList){
+        ImageLoader mImageLoader;
+    	public ImageAdapter(Context context, File[] imageList, int width ,int height){
     		this.context=context;
     		this.imageList=imageList;
-    		inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    		resource=R.layout.thumbnail_item;
+    		this.inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    		this.resource=R.layout.thumbnail_item;
+    		this.width=width;
+    		this.height=height;
+    		this.mImageLoader = new ImageLoader(PhotoGalleryActivity.this, width, height);
     	}
     	
 		@Override
@@ -101,11 +103,6 @@ public class PhotoGalleryActivity extends Activity{
 		public long getItemId(int position) {
 			return position;
 		}
-
-		public void setImageSize(int mWidth,int mHeight){
-			width=mWidth;
-			height=mHeight;
-		}
 		
 		@Override
 		public View getView(int position, View converView, ViewGroup parent) {
@@ -113,8 +110,8 @@ public class PhotoGalleryActivity extends Activity{
 			inflater.inflate(resource, ll,true);
 			ll.setLayoutParams(new Gallery.LayoutParams(width,height));
 			ImageView iv=(ImageView)ll.findViewById(R.id.iv_item);
-			iv.setImageBitmap(ImageUtils.decodeFile(imageList[position], Math.max(width, height)));
 			iv.setScaleType(ScaleType.CENTER_INSIDE);			
+			mImageLoader.loadImage(imageList[position].getAbsolutePath(), iv);
 			return ll;
 		}    	
     }
