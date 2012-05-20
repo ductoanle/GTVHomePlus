@@ -211,10 +211,11 @@ public class ImageLoader {
 				if(options.outWidth > 0 && options.outHeight > 0){
 					if (!cancel) {
 						// Now see how much we need to scale it down.
+						//use 2*imageWidth and 2*imageHeight so that the bitmap to be resized later has better quality
 						int widthFactor = (options.outWidth + imageWidth - 1)
-								/ imageWidth;
+								/ (2*imageWidth);
 						int heightFactor = (options.outHeight + imageHeight - 1)
-								/ imageHeight;
+								/ (2*imageHeight);
 						widthFactor = Math.max(widthFactor, heightFactor);
 						widthFactor = Math.max(widthFactor, 1);
 						// Now turn it into a power of two.

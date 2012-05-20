@@ -5,5 +5,6 @@
     <dimen name="subtitle_padding">25dp</dimen>
     <dimen name="subtitle_size">26dp</dimen>
     
-    
+    <!-- photo gallery -->
+    <dimen name="thumbnail_padding">5dp</dimen>
 </resources>

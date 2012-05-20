@@ -7,6 +7,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,16 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
+
 import com.ep.gtvhomeplus.utils.ImageLoader;
 
 public class PhotoGalleryActivity extends Activity{
+	private static final String TAG= "PhotoGalleryActivity";
+	
+	private static double GALLERY_VS_SCREEN_HEIGHT_RATIO =1.0/5.0;
+	private static double THUMBNAIL_VS_GALLERY_WIDTH_RATION = 1.0/7.0;
+	private static double SPACING_VS_THUMBNAIL_WIDTH_RATIO =1.0/10.0;
+	
 	////views
     ImageView mFocusedImage;
 	Gallery mBottomGallery;
@@ -51,13 +59,12 @@ public class PhotoGalleryActivity extends Activity{
     	int mScreenHeight = metrics.heightPixels;
     
         int galleryWidth = mScreenWidth;
-		int galleryHeight = mScreenHeight/5;
-
+		int galleryHeight = (int) (mScreenHeight *GALLERY_VS_SCREEN_HEIGHT_RATIO);
+        Log.d(TAG,"gallery Height: "+galleryHeight);
 		
 		int imageHeight = galleryHeight;
-		int imageWidth = galleryWidth * 1 / 7;
-		int spacing = imageWidth /10;
-		
+		int imageWidth = (int) (galleryWidth * THUMBNAIL_VS_GALLERY_WIDTH_RATION);
+		int spacing = (int) (imageWidth * SPACING_VS_THUMBNAIL_WIDTH_RATIO);		
 	    int offset = galleryWidth - imageWidth - 2 * spacing;
 	   
         ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles,imageWidth,imageHeight);	    
@@ -108,9 +115,9 @@ public class PhotoGalleryActivity extends Activity{
 		public View getView(int position, View converView, ViewGroup parent) {
 			LinearLayout ll=new LinearLayout(context);
 			inflater.inflate(resource, ll,true);
-			ll.setLayoutParams(new Gallery.LayoutParams(width,height));
 			ImageView iv=(ImageView)ll.findViewById(R.id.iv_item);
-			iv.setScaleType(ScaleType.CENTER_INSIDE);			
+			iv.setLayoutParams(new LinearLayout.LayoutParams(width,height));
+			iv.setScaleType(ScaleType.FIT_XY);			
 			mImageLoader.loadImage(imageList[position].getAbsolutePath(), iv);
 			return ll;
 		}    	
