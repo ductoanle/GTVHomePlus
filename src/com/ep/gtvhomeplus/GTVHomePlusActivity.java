@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 
 import com.ep.gtvhomeplus.fragments.AttachedStoragesFragment;
 import com.ep.gtvhomeplus.fragments.PlayMovieFragment;
+import com.ep.gtvhomeplus.fragments.USBStorageFragment;
 import com.example.google.tv.leftnavbar.LeftNavBar;
 import com.example.google.tv.leftnavbar.LeftNavBarService;
 
@@ -110,7 +111,7 @@ public class GTVHomePlusActivity extends Activity {
 				.newTab()
 				.setIcon(R.drawable.network_storage)
 				.setText(R.string.network_storage_menu)
-				.setTabListener(new TabListener<PlayMovieFragment>(this, NETWORK_TAG, PlayMovieFragment.class));
+				.setTabListener(new TabListener<PlayMovieFragment>(this, USB_TAG, PlayMovieFragment.class));
 		actionBar.addTab(tab);
 	}
 

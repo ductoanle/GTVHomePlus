@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
@@ -33,8 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ep.gtvhomeplus.GTVHomePlusActivity;
-import com.ep.gtvhomeplus.PhotoGalleryActivity;
+import com.ep.gtvhomeplus.PlayMovieActivity;
 import com.ep.gtvhomeplus.R;
 import com.ep.gtvhomeplus.file.DirectoryContents;
 import com.ep.gtvhomeplus.file.DirectoryScanner;
@@ -42,11 +39,10 @@ import com.ep.gtvhomeplus.file.IconifiedText;
 import com.ep.gtvhomeplus.file.IconifiedTextListAdapter;
 import com.ep.gtvhomeplus.file.ThumbnailLoader;
 import com.ep.gtvhomeplus.file.utils.FileUtils;
-import com.ep.gtvhomeplus.file.utils.MimeTypeHelper;
 import com.ep.gtvhomeplus.file.utils.MimeTypeParser;
 import com.ep.gtvhomeplus.file.utils.MimeTypes;
 
-public class AttachedStoragesFragment extends Fragment implements OnItemClickListener{
+public class USBStorageFragment extends Fragment implements OnItemClickListener{
 
 	private static final String TAG = "InternalStoragesFragment";
 
@@ -62,8 +58,6 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 	private static final String BUNDLE_CONTEXT_TEXT = "context_text";
 	private static final String BUNDLE_STEPS_BACK = "steps_back";
 	private static final String BUNDLE_DIRECTORY_ENTRIES = "directory_entries";
-	
-	public static final String USB_ROOT_PATH="/mnt/media";
 	/** Shows whether activity state has been restored (e.g. from a rotation). */
 	private static boolean mRestored = false;
 
@@ -118,7 +112,6 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 	private ProgressBar mProgressBar;
     private ListView mFilesList;
     ListAdapter mFileListAdapter;
-    
 	
 	/** Called when the activity is first created. */ 
 	@Override 
@@ -127,27 +120,19 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 
 		currentHandler = new Handler() {
 			public void handleMessage(Message msg) {
-				AttachedStoragesFragment.this.handleMessage(msg);
+				USBStorageFragment.this.handleMessage(msg);
 			}
 		};
-		
-		//// Create map of extensions:
+		// Create map of extensions:
 		getMimeTypes();
 		getSdCardPath();      
-        
-		//// setDefaultDirectory
+
 		mDefaultDirectory = new File("/");
-		int selectedTabPosition = ((GTVHomePlusActivity)getActivity()).getSelectedTabPosition() ;
-		if(selectedTabPosition == GTVHomePlusActivity.TAB_INTERNAL_POSITION){
-		    if (!TextUtils.isEmpty(mSdCardPath)) {
-			   mDefaultDirectory = new File(mSdCardPath);
-		    }
-		}else if (selectedTabPosition == GTVHomePlusActivity.TAB_USB_POSITION){
-			mDefaultDirectory = new File(USB_ROOT_PATH);
+		if (!TextUtils.isEmpty(mSdCardPath)) {
+			mDefaultDirectory = new File(mSdCardPath);
 		}
 		
-		
-		//// Default state
+		// Default state
 		mState = STATE_BROWSE;
 		mWritableOnly = false;
 		mStepsBack = 0;
@@ -378,25 +363,21 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 			Toast.makeText(getActivity(), R.string.error_file_does_not_exists, Toast.LENGTH_SHORT).show();
 			return;
 		}
+
+		Intent intent = new Intent(getActivity(), PlayMovieActivity.class);
 		Uri data = FileUtils.getUri(aFile);
-		String type = mMimeTypes.getMimeType(aFile.getName());		
-		
-	    if(MimeTypeHelper.isPhotoType(type)){
-	    	Intent intent = new Intent(getActivity(),PhotoGalleryActivity.class);
-	    	intent.setData(data);
-	    	startActivity(intent);
-	    }
-	    else{
-		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+		String type = mMimeTypes.getMimeType(aFile.getName());
 		intent.setDataAndType(data, type);
+				
+		intent.putExtra(PlayMovieActivity.MEDIA_FILE, aFile.getAbsolutePath());
+		intent.putExtra(PlayMovieActivity.MEDIA_FOLDER, aFile.getParent());
+		
 
 		try {
-			startActivity(intent); 
+			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			Toast.makeText(getActivity(), R.string.application_not_available, Toast.LENGTH_SHORT).show();
 		};
-	    }
-		
 	} 
 
 	public void refreshList() {
@@ -468,7 +449,6 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 		if (clickedFile != null) {
 			if (clickedFile.isDirectory()) {
 				// If we click on folders, we can return later by the "back" key.
-				Log.d(TAG,"step back increase");
 						mStepsBack++;
 			}
 			browseTo(clickedFile);
@@ -478,12 +458,6 @@ public class AttachedStoragesFragment extends Fragment implements OnItemClickLis
 	
 
 	private void getSdCardPath() {
-		mSdCardPath = android.os.Environment
-				.getExternalStorageDirectory().getAbsolutePath();
+		mSdCardPath = mSdCardPath = "/mnt/media/usb.BCFCAAF2FCAAA5DC";
 	}
-
-
-		
-		
-	
 }
