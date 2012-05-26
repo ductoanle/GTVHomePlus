@@ -4,23 +4,29 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
-import com.ep.gtvhomeplus.utils.ImageLoader;
+import com.ep.gtvhomeplus.utils.GalleryThumbnailLoader;
 
-public class PhotoGalleryActivity extends Activity{
+public class PhotoGalleryActivity extends Activity implements OnItemSelectedListener{
 	private static final String TAG= "PhotoGalleryActivity";
 	
 	private static double GALLERY_VS_SCREEN_HEIGHT_RATIO =1.0/5.0;
@@ -31,7 +37,10 @@ public class PhotoGalleryActivity extends Activity{
     ImageView mFocusedImage;
 	Gallery mBottomGallery;
 	View mParentView;
+	ProgressBar mSpinner;
 	
+	FocusedImageUpdater mImageUpdaterThread;
+	Handler mHandler;
 	Uri mInitialPhotoUri;
 	File[] mPhotoFiles;
 	
@@ -39,20 +48,24 @@ public class PhotoGalleryActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.photo_gallery);
+		mHandler =new Handler();
+		
+		
 		mFocusedImage =(ImageView) findViewById(R.id.iv_focused);
 		mBottomGallery= (Gallery) findViewById(R.id.gallery_bottom);
 		mParentView = findViewById(R.id.main_content);
+		mSpinner = (ProgressBar) findViewById(R.id.progress_bar);
 		
 		mInitialPhotoUri = getIntent().getData();
 		File photoFile= new File(mInitialPhotoUri.getPath());
 		File directory = photoFile.getParentFile();
     	mPhotoFiles = directory.listFiles();
     	
-    	setBottomGallery();
-    	
+    	initializeBottomGallery();
+    	mBottomGallery.setOnItemSelectedListener(this);
 	}
     
-	private void setBottomGallery(){
+	private void initializeBottomGallery(){
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int mScreenWidth = metrics.widthPixels;
@@ -78,6 +91,54 @@ public class PhotoGalleryActivity extends Activity{
 
 	}
 	
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		if (mImageUpdaterThread !=null && mImageUpdaterThread.isAlive())
+			mImageUpdaterThread.cancel();
+		mImageUpdaterThread= new FocusedImageUpdater(mPhotoFiles[position].getAbsolutePath());
+        mImageUpdaterThread.start();
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		
+	}
+	
+	private class FocusedImageUpdater extends Thread{
+		String filePath;
+		boolean cancel=false;
+		
+		FocusedImageUpdater(String filePath){
+			this.filePath=filePath;
+		}
+		public void cancel(){
+			this.cancel=true;
+		}
+		
+		@Override
+		public void run(){
+			if(!cancel){
+				mHandler.post(new Runnable() {					
+					@Override
+					public void run() {
+						mSpinner.setVisibility(View.VISIBLE);
+					}
+				});
+				
+				final Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+				if(bitmap!=null && !cancel)
+					mHandler.post(new Runnable() {						
+						@Override
+						public void run() {
+							mSpinner.setVisibility(View.GONE);
+							mFocusedImage.setImageBitmap(bitmap);
+						}
+					});
+
+			}
+		}
+	}
+	
 	private class ImageAdapter extends BaseAdapter{
 
     	Context context;
@@ -85,7 +146,7 @@ public class PhotoGalleryActivity extends Activity{
     	int width,height;
     	LayoutInflater inflater;
     	int resource;
-        ImageLoader mImageLoader;
+        GalleryThumbnailLoader mImageLoader;
     	public ImageAdapter(Context context, File[] imageList, int width ,int height){
     		this.context=context;
     		this.imageList=imageList;
@@ -93,7 +154,7 @@ public class PhotoGalleryActivity extends Activity{
     		this.resource=R.layout.thumbnail_item;
     		this.width=width;
     		this.height=height;
-    		this.mImageLoader = new ImageLoader(PhotoGalleryActivity.this, width, height);
+    		this.mImageLoader = new GalleryThumbnailLoader(PhotoGalleryActivity.this, width, height);
     	}
     	
 		@Override
@@ -122,4 +183,5 @@ public class PhotoGalleryActivity extends Activity{
 			return ll;
 		}    	
     }
+
 }

@@ -2,7 +2,6 @@ package com.ep.gtvhomeplus.utils;
 
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -16,19 +15,16 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.ep.gtvhomeplus.file.utils.FileUtils;
-import com.ep.gtvhomeplus.file.utils.ImageUtils;
-
-public class ImageLoader {
+public class GalleryThumbnailLoader {
 	
 	private static final String TAG = "ImageLoader";
 	
 	// Both hard and soft caches are purged after 40 seconds idling. 
 	private static final int DELAY_BEFORE_PURGE = 40000;
+	//TODO: fine tune MAX_CACHE_CAPACITY
 	private static final int MAX_CACHE_CAPACITY = 40;
 	
 	// Maximum number of threads in the executor pool.
-	// TODO: Tune POOL_SIZE for maximum performance gain
 	private static final int POOL_SIZE = 5;
 	
     private boolean cancel;
@@ -52,7 +48,7 @@ public class ImageLoader {
      * @author PhilipHayes
      * @param context Current application context.
      */
-	public ImageLoader(Context context) {
+	public GalleryThumbnailLoader(Context context) {
 		mContext = context;
 		
 		purger = new Runnable(){
@@ -85,7 +81,7 @@ public class ImageLoader {
 		};
 	}
 	
-	public ImageLoader(Context context, int width, int height){
+	public GalleryThumbnailLoader(Context context, int width, int height){
 	    this(context);
 		this.imageHeight=height;
 		this.imageWidth=width;
@@ -97,7 +93,7 @@ public class ImageLoader {
 	 */
 	public void loadImage(String fileName, ImageView imageView) {
 		if(!cancel){
-			// We reset the caches after every 30 or so seconds of inactivity for memory efficiency.
+			// We reset the caches after every 40 or so seconds of inactivity for memory efficiency.
 			resetPurgeTimer();
 			
 			Bitmap bitmap = getBitmapFromCache(fileName);
@@ -255,7 +251,7 @@ public class ImageLoader {
 	}
 	
 	/**
-	 * @see ThumbnailUpdater
+	 * @see ImageUpdater
 	 */
 	private class ThumbnailRunner implements Runnable {
 		PhotoToLoad thumb;
@@ -272,7 +268,7 @@ public class ImageLoader {
 					mHardBitmapCache.put(thumb.filePath, bitmap);
 					Activity activity = ((Activity) mContext);
 					Log.d(TAG,"updating on UI thread");
-					activity.runOnUiThread(new ThumbnailUpdater(bitmap, thumb));
+					activity.runOnUiThread(new ImageUpdater(bitmap, thumb));
 					thumb = null;
 				}
 			}
@@ -280,11 +276,11 @@ public class ImageLoader {
 	}
 	
 
-	private class ThumbnailUpdater implements Runnable {
+	private class ImageUpdater implements Runnable {
 		private Bitmap bitmap;
 		private PhotoToLoad thumb;
 		
-		public ThumbnailUpdater(Bitmap bitmap, PhotoToLoad thumb) {
+		public ImageUpdater(Bitmap bitmap, PhotoToLoad thumb) {
 			this.bitmap = bitmap;
 			this.thumb = thumb;
 		}

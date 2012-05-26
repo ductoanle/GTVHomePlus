@@ -102,7 +102,7 @@ public class ThumbnailLoader {
 	 */
 	public void loadImage(String parentFile, IconifiedText text, ImageView imageView) {
 		if(!cancel && !mBlacklist.contains(text.getText())){
-			// We reset the caches after every 30 or so seconds of inactivity for memory efficiency.
+			// We reset the caches after every 40 or so seconds of inactivity for memory efficiency.
 			resetPurgeTimer();
 			
 			Bitmap bitmap = getBitmapFromCache(text.getText());
