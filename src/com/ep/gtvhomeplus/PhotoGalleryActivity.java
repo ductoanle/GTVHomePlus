@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,7 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 	Handler mHandler;
 	Uri mInitialPhotoUri;
 	File[] mPhotoFiles;
+	String mSelectedFilePath;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,6 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
     
         int galleryWidth = mScreenWidth;
 		int galleryHeight = (int) (mScreenHeight *GALLERY_VS_SCREEN_HEIGHT_RATIO);
-        Log.d(TAG,"gallery Height: "+galleryHeight);
 		
 		int imageHeight = galleryHeight;
 		int imageWidth = (int) (galleryWidth * THUMBNAIL_VS_GALLERY_WIDTH_RATION);
@@ -93,10 +92,13 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		mSelectedFilePath=mPhotoFiles[position].getAbsolutePath();
 		if (mImageUpdaterThread !=null && mImageUpdaterThread.isAlive())
-			mImageUpdaterThread.cancel();
-		mImageUpdaterThread= new FocusedImageUpdater(mPhotoFiles[position].getAbsolutePath());
+			mImageUpdaterThread.cancel();		
+		else{
+		mImageUpdaterThread= new FocusedImageUpdater(mSelectedFilePath);
         mImageUpdaterThread.start();
+		}
 	}
 
 	@Override
@@ -117,25 +119,28 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 		
 		@Override
 		public void run(){
-			if(!cancel){
-				mHandler.post(new Runnable() {					
+			mHandler.post(new Runnable() {					
+				@Override
+				public void run() {
+					mSpinner.setVisibility(View.VISIBLE);
+				}
+			});
+
+			final Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+			if(bitmap!=null && !cancel)
+				mHandler.post(new Runnable() {						
 					@Override
 					public void run() {
-						mSpinner.setVisibility(View.VISIBLE);
+						mSpinner.setVisibility(View.GONE);
+						mFocusedImage.setImageBitmap(bitmap);
 					}
 				});
-				
-				final Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-				if(bitmap!=null && !cancel)
-					mHandler.post(new Runnable() {						
-						@Override
-						public void run() {
-							mSpinner.setVisibility(View.GONE);
-							mFocusedImage.setImageBitmap(bitmap);
-						}
-					});
-
+			
+			if (!filePath.equals(mSelectedFilePath)){
+				mImageUpdaterThread = new FocusedImageUpdater(mSelectedFilePath);
+				mImageUpdaterThread.start();
 			}
+			
 		}
 	}
 	
