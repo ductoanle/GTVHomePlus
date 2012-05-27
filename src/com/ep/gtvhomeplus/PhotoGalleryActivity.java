@@ -63,12 +63,8 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 		mBottomGallery= (Gallery) findViewById(R.id.gallery_bottom);
 		mParentView = findViewById(R.id.main_content);
 		mSpinner = (ProgressBar) findViewById(R.id.progress_bar);
-		
-		mInitialPhotoUri = getIntent().getData();
-		File photoFile= new File(mInitialPhotoUri.getPath());
-		File directory = photoFile.getParentFile();
-    	mPhotoFiles = directory.listFiles();
-    	
+	    
+		getPhotoFiles();
     	initializeBottomGallery();
     	mBottomGallery.setOnItemSelectedListener(this);
     	
@@ -78,35 +74,7 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
     	//reset duration
     	mHideAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
 	}
-    
-	private void initializeBottomGallery(){
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int mScreenWidth = metrics.widthPixels;
-    	int mScreenHeight = metrics.heightPixels;
-    
-        int galleryWidth = mScreenWidth;
-		int galleryHeight = (int) (mScreenHeight *GALLERY_VS_SCREEN_HEIGHT_RATIO);
 		
-		int imageHeight = galleryHeight;
-		int imageWidth = (int) (galleryWidth * THUMBNAIL_VS_GALLERY_WIDTH_RATION);
-		int spacing = (int) (imageWidth * SPACING_VS_THUMBNAIL_WIDTH_RATIO);		
-	    int offset = galleryWidth - imageWidth - 2 * spacing;
-	   
-        ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles,imageWidth,imageHeight);	    
-		mBottomGallery.setSpacing(spacing);
-        mBottomGallery.setAdapter(imageAdapter);
-        
-    	// set gallery to left side
-        MarginLayoutParams mlp = (MarginLayoutParams) mBottomGallery.getLayoutParams();
-        mlp.setMargins(-offset, mlp.topMargin,
-                mlp.rightMargin, mlp.bottomMargin);
-        mHideAnimator = ObjectAnimator.ofFloat(mBottomGallery, "translationY", 0, (float)galleryHeight* 1.2f);
-        mShowAnimator = ObjectAnimator.ofFloat(mBottomGallery, "translationY", (float)galleryHeight *1.2f, 0);
-        mHideAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
-        mShowAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
-	}
-	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		mSelectedFilePath=mPhotoFiles[position].getAbsolutePath();
@@ -137,7 +105,56 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 		}
 		return true;
 	}
-   
+	/**
+	 * get all the files in the current directory
+	 * the file at index 0 is the file user selected
+	 */
+	private void getPhotoFiles(){
+		mInitialPhotoUri = getIntent().getData();
+		File photoFile= new File(mInitialPhotoUri.getPath());
+		File directory = photoFile.getParentFile();
+    	mPhotoFiles = directory.listFiles();
+        int indexOfSelectedFile =0;
+        while(indexOfSelectedFile< mPhotoFiles.length && 
+        		!mPhotoFiles[indexOfSelectedFile].getAbsolutePath().equals(photoFile.getAbsolutePath())){
+        	indexOfSelectedFile ++;
+        }
+        if(indexOfSelectedFile<mPhotoFiles.length){
+        	File tempFile = mPhotoFiles[indexOfSelectedFile];
+        	mPhotoFiles[indexOfSelectedFile]=mPhotoFiles[0];
+        	mPhotoFiles[0]=tempFile;
+        }
+        	
+	}
+    
+	private void initializeBottomGallery(){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int mScreenWidth = metrics.widthPixels;
+    	int mScreenHeight = metrics.heightPixels;
+    
+        int galleryWidth = mScreenWidth;
+		int galleryHeight = (int) (mScreenHeight *GALLERY_VS_SCREEN_HEIGHT_RATIO);
+		
+		int imageHeight = galleryHeight;
+		int imageWidth = (int) (galleryWidth * THUMBNAIL_VS_GALLERY_WIDTH_RATION);
+		int spacing = (int) (imageWidth * SPACING_VS_THUMBNAIL_WIDTH_RATIO);		
+	    int offset = galleryWidth - imageWidth - 2 * spacing;
+	   
+        ImageAdapter imageAdapter=new ImageAdapter(this,mPhotoFiles,imageWidth,imageHeight);	    
+		mBottomGallery.setSpacing(spacing);
+        mBottomGallery.setAdapter(imageAdapter);
+        
+    	// set gallery to left side
+        MarginLayoutParams mlp = (MarginLayoutParams) mBottomGallery.getLayoutParams();
+        mlp.setMargins(-offset, mlp.topMargin,
+                mlp.rightMargin, mlp.bottomMargin);
+        mHideAnimator = ObjectAnimator.ofFloat(mBottomGallery, "translationY", 0, (float)galleryHeight* 1.2f);
+        mShowAnimator = ObjectAnimator.ofFloat(mBottomGallery, "translationY", (float)galleryHeight *1.2f, 0);
+        mHideAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
+        mShowAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
+	}
+	
     private void toggleBottomGallery(){
     	if(mBottomGalleryShow){
     		mHideAnimator.start();

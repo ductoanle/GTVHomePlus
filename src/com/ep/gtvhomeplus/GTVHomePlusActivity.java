@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 
 import com.ep.gtvhomeplus.fragments.AttachedStoragesFragment;
 import com.ep.gtvhomeplus.fragments.PlayMovieFragment;
-import com.ep.gtvhomeplus.fragments.USBStorageFragment;
 import com.example.google.tv.leftnavbar.LeftNavBar;
 import com.example.google.tv.leftnavbar.LeftNavBarService;
 

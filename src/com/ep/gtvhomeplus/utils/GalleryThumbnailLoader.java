@@ -22,7 +22,7 @@ public class GalleryThumbnailLoader {
 	// Both hard and soft caches are purged after 40 seconds idling. 
 	private static final int DELAY_BEFORE_PURGE = 40000;
 	//TODO: fine tune MAX_CACHE_CAPACITY
-	private static final int MAX_CACHE_CAPACITY = 40;
+	private static final int MAX_CACHE_CAPACITY = 10;
 	
 	// Maximum number of threads in the executor pool.
 	private static final int POOL_SIZE = 5;
