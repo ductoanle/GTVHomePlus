@@ -2,6 +2,7 @@ package com.ep.gtvhomeplus;
 
 import java.io.File;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,17 +34,23 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 	private static double THUMBNAIL_VS_GALLERY_WIDTH_RATION = 1.0/7.0;
 	private static double SPACING_VS_THUMBNAIL_WIDTH_RATIO =1.0/10.0;
 	
+	private static long SHOW_HIDE_ANIMATION_DURATION =100;
 	////views
     ImageView mFocusedImage;
 	Gallery mBottomGallery;
 	View mParentView;
 	ProgressBar mSpinner;
 	
+	
+	boolean mBottomGalleryShow=false;
+	
 	FocusedImageUpdater mImageUpdaterThread;
 	Handler mHandler;
 	Uri mInitialPhotoUri;
 	File[] mPhotoFiles;
 	String mSelectedFilePath;
+	
+	ObjectAnimator mHideAnimator, mShowAnimator;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +71,12 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
     	
     	initializeBottomGallery();
     	mBottomGallery.setOnItemSelectedListener(this);
+    	
+    	//hide the bottom gallery at the start of the activity
+    	//this animation should happen in a short time
+    	mHideAnimator.setDuration(20).start();
+    	//reset duration
+    	mHideAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
 	}
     
 	private void initializeBottomGallery(){
@@ -87,7 +101,10 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
         MarginLayoutParams mlp = (MarginLayoutParams) mBottomGallery.getLayoutParams();
         mlp.setMargins(-offset, mlp.topMargin,
                 mlp.rightMargin, mlp.bottomMargin);
-
+        mHideAnimator = ObjectAnimator.ofFloat(mBottomGallery, "translationY", 0, (float)galleryHeight* 1.2f);
+        mShowAnimator = ObjectAnimator.ofFloat(mBottomGallery, "translationY", (float)galleryHeight *1.2f, 0);
+        mHideAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
+        mShowAnimator.setDuration(SHOW_HIDE_ANIMATION_DURATION);
 	}
 	
 	@Override
@@ -105,7 +122,33 @@ public class PhotoGalleryActivity extends Activity implements OnItemSelectedList
 	public void onNothingSelected(AdapterView<?> arg0) {
 		
 	}
-	
+		
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		switch (keyCode){
+		case KeyEvent.KEYCODE_DPAD_UP:
+			toggleBottomGallery();
+			break;
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+			toggleBottomGallery();
+			break;
+		default:
+			return super.onKeyUp(keyCode, event);
+		}
+		return true;
+	}
+   
+    private void toggleBottomGallery(){
+    	if(mBottomGalleryShow){
+    		mHideAnimator.start();
+    		mBottomGalleryShow=false;
+    	}
+    	else{
+    		mShowAnimator.start();
+    		mBottomGalleryShow=true;    		
+    	}
+    }
+
 	private class FocusedImageUpdater extends Thread{
 		String filePath;
 		boolean cancel=false;
